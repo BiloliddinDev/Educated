@@ -1,4 +1,3 @@
-import React from "react";
 import { Navigate } from "react-router-dom";
 
 const user = {
@@ -8,7 +7,7 @@ const user = {
   teacher: "teacher",
 };
 
-const curentUser = "admin";
+const curentUser = localStorage.getItem("role");
 
 export const PuplickRoute = ({ children }: any) => {
   return <>{children}</>;
@@ -28,9 +27,9 @@ export const StudentRoute = ({ children }: any) => {
 
 export const TeacherRoute = ({ children }: any) => {
   if (
-    curentUser === user.teacher &&
-    curentUser !== user.admin &&
-    curentUser !== user.student
+    curentUser === user.teacher
+    // curentUser !== user.admin &&
+    // curentUser !== user.student
   ) {
     return <>{children}</>;
   } else {
@@ -40,9 +39,9 @@ export const TeacherRoute = ({ children }: any) => {
 
 export const AdminRoute = ({ children }: any) => {
   if (
-    curentUser === user.admin &&
-    curentUser !== user.teacher &&
-    curentUser !== user.student
+    curentUser === user.admin
+    // curentUser !== user.teacher &&
+    // curentUser !== user.student
   ) {
     return <>{children}</>;
   } else {

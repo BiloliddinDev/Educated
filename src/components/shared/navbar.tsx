@@ -3,7 +3,9 @@ import { Link, NavLink } from "react-router-dom";
 import { Separator } from "../ui/separator";
 
 const Saidbar = () => {
-  const curentUser = "admin";
+  // const curentUser = "admin";
+
+  const curentUser = localStorage.getItem("role");
 
   const userLinks = linksByRole[curentUser] || [];
 

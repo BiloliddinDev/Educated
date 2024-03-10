@@ -11,11 +11,13 @@ import Info from "./page/student/pages/info/info";
 import Groups from "./page/teacher/pages/group";
 import Lesson from "./page/teacher/pages/lesson";
 import Curses from "./page/teacher/pages/courses";
+import { Toaster } from "./components/ui/toaster";
 
 function App() {
   return (
     <div className="App">
       <Layouts>
+        <Toaster />
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route
