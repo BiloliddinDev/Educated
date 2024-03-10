@@ -1,0 +1,23 @@
+Admin
+Dashboard
+Manage Users (Add, Edit, Delete)
+Manage Courses (View, Edit)
+
+Teacher
+Dashboard
+Courses (View, Create, Edit)
+Materials (Upload, View, Download)
+Groups (Create, Manage)
+Students (Add to Courses, View)
+Attendance (Record, View)
+Grades (View, Add/Update)
+Profile (View, Edit, Upload Avatar)
+
+Student
+Dashboard
+Courses (View)
+Materials (View, Download)
+Groups (View)
+Attendance (View)
+Grades (View)
+Profile (View, Edit, Upload Avatar)
