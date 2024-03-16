@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=Kumar+One&display=swap");
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -77,4 +79,17 @@
 
 .ant-modal-footer {
   display: none;
+  font-family: "Kumar One" !important;
+}
+
+.ant-menu-item {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  color: white !important;
+}
+.ant-menu-item-selected {
+  background-color: #509cdb !important;
+  color: white !important;
 }

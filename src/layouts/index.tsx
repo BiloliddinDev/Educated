@@ -7,7 +7,7 @@ const Layouts = ({ children }: any) => {
     <div>
       {location.pathname !== "/login" ? (
         <div className="text-center bg-slate-700 text-white">
-          <Saidbar />
+          {/* <Saidbar /> */}
         </div>
       ) : (
         <></>
