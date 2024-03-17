@@ -1,6 +1,10 @@
+import Madal from "@/components/shared/madal";
 import { Button } from "@/components/ui/button";
+import { useFolder } from "@/utils/zuztand";
 import { useNavigate } from "react-router-dom";
+import Login from "../login";
 const Home = () => {
+  const { onOpen } = useFolder();
   const navigate = useNavigate();
   return (
     <div className="text-center">
@@ -26,7 +30,10 @@ const Home = () => {
         voluptas omnis ipsam illum laudantium, suscipit eaque minus pariatur
         eveniet ab magnam vero nostrum officiis, corrupti accusantium ea harum.
       </p>
-      <Button onClick={() => navigate("/login")}>Login now</Button>
+      <Button onClick={() => onOpen()}>Login now</Button>
+      <Madal>
+        <Login />
+      </Madal>
     </div>
   );
 };
