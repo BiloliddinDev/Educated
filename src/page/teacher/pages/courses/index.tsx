@@ -1,12 +1,24 @@
 import Madal from "@/components/shared/madal";
+import { baseurl } from "@/utils/axios";
 import { useFolder } from "@/utils/zuztand";
-import React from "react";
+import { Avatar } from "antd";
+import { useEffect, useState } from "react";
 
 const Curses = () => {
   const { onOpen } = useFolder();
+
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    baseurl.get("/profile").then((res) => setData(res?.data));
+  }, []);
+
+  console.log(data);
   return (
     <div>
-      <h1 className="bg-red-500 p-2 text-white">Curs</h1>
+      <div className="p-2 bg-slate-500 h-[200px]">
+        <Avatar></Avatar>
+      </div>
       <div className="flex m-2">
         <div
           onClick={() => onOpen()}

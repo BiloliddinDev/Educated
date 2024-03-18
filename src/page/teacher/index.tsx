@@ -1,12 +1,10 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import React, { useState } from "react";
 import { RxDashboard } from "react-icons/rx";
 import { PiStudent } from "react-icons/pi";
 import { FaChalkboardTeacher, FaChartPie } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 import type { MenuProps } from "antd";
-import { Avatar, Button, Menu } from "antd";
-import { ExternalLink } from "lucide-react";
+import { Avatar, Menu } from "antd";
 import { Separator } from "@/components/ui/separator";
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -32,7 +30,7 @@ const items: MenuItem[] = [
   getItem("Teachers", "lesson", <FaChalkboardTeacher size={20} />),
   getItem("Students/ classes", "groups", <PiStudent size={20} />),
   getItem("Settings and profile", "courses", <IoMdSettings size={20} />),
-  getItem("Exams", "/teacher", <FaChartPie size={20} />),
+  getItem("Exams", "/1234", <FaChartPie size={20} />),
 ];
 
 const Teacher = () => {
@@ -60,7 +58,7 @@ const Teacher = () => {
           items={items}
         />
       </div>
-      <div className="ml-[245px]">
+      <div className="ml-[240px]">
         <Outlet />
       </div>
     </div>

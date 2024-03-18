@@ -23,8 +23,8 @@ const Login = () => {
       //login
       baseurl.post(`/login`, values).then((res) => {
         console.log(res, 1111);
-        // localStorage.setItem("token", `${res?.data?.token}`);
-        // localStorage.setItem("role", `${res?.data?.role}`);
+        localStorage.setItem("token", `${res?.data?.token}`);
+        localStorage.setItem("role", `${res?.data?.role}`);
         toast({
           title: "You are Welcome ✅✅✅",
         });
