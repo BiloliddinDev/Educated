@@ -40,3 +40,8 @@
 .read-the-docs {
   color: #888;
 }
+
+.ant-upload-select {
+  width: 100% !important;
+  background-color: red !important;
+}
