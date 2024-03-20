@@ -6,7 +6,7 @@ const columns = [
   },
 ];
 const TableGroup = () => {
-  return <Table dataSource={} columns={columns} />;
+  return <Table columns={columns} />;
 };
 
 export default TableGroup;

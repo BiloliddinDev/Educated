@@ -8,7 +8,5 @@ export const baseurl = axios.create({
 
   headers: {
     Authorization: `Bearer ${token1}`,
-    "Content-Type": "multipart/form-data",
-    // "Content-Type": "multipart/form-data",
   },
 });

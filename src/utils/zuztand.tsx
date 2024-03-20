@@ -13,3 +13,13 @@ export const useFolder = create<FolderStore>((set) => {
     onClose: () => set({ isOpen: false }),
   };
 });
+
+type Action = {
+  lastName: string;
+  updateLastName: (lastName: string) => void;
+};
+
+export const useTeacherId = create<Action>((set) => ({
+  lastName: "",
+  updateLastName: (lastName) => set(() => ({ lastName: lastName })),
+}));
