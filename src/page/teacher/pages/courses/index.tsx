@@ -37,6 +37,7 @@ const Courses = () => {
   const [data, setData] = useState<Teacher>();
   const [form] = Form.useForm();
 
+<<<<<<< HEAD
   useEffect(() => {
     baseurl.get("/profile").then((res) => {
       setData(res.data), updateLastName(res?.data.user._id);
@@ -45,6 +46,23 @@ const Courses = () => {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files: any = e.target.files;
+=======
+	const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const files: any = e.target.files
+		const formData = new FormData()
+		formData.append('profileImage', files[0])
+	
+		baseurl
+			.put(`/profile/image`, formData, {
+				headers: { 'Content-Type': 'multipart/form-data' },
+			})
+			.then(res => {
+				setData(res.data)
+				message.success('Updated profile image')
+			})
+	}
+	
+>>>>>>> 793419aa8d5d4d333d96975614b4569981a2c817
 
     baseurl
       .put(`/profile/image`, {
