@@ -42,16 +42,19 @@ const Courses = () => {
 
 	const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const files: any = e.target.files
-
+		const formData = new FormData()
+		formData.append('profileImage', files[0])
+	
 		baseurl
-			.put(`/profile/image`, {
-				profileImage: files[0],
+			.put(`/profile/image`, formData, {
+				headers: { 'Content-Type': 'multipart/form-data' },
 			})
 			.then(res => {
 				setData(res.data)
 				message.success('Updated profile image')
 			})
 	}
+	
 
 	const onFinish = async (values: any) => {
 		baseurl
