@@ -29,7 +29,7 @@ interface Teacher {
   };
 }
 
-const Courses = () => {
+const Profile = () => {
   const { onOpen, onClose } = useFolder();
 
   const { updateLastName } = useTeacherId();
@@ -169,4 +169,4 @@ const Courses = () => {
   );
 };
 
-export default Courses;
+export default Profile;

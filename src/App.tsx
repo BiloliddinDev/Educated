@@ -9,8 +9,9 @@ import Materials from "./page/student/pages/materials";
 import Info from "./page/student/pages/info/info";
 import Groups from "./page/teacher/pages/group";
 import Lesson from "./page/teacher/pages/lesson";
-import Curses from "./page/teacher/pages/courses";
+import Curses from "./page/teacher/pages/profile";
 import { Toaster } from "./components/ui/toaster";
+import Profile from './page/teacher/pages/profile'
 
 function App() {
   return (
@@ -38,7 +39,7 @@ function App() {
           >
             <Route path="groups" element={<Groups />} />
             <Route path="lesson" element={<Lesson />} />
-            <Route path="courses" element={<Curses />} />
+            <Route path="Profile" element={<Profile />} />
           </Route>
           <Route
             path="/student"
