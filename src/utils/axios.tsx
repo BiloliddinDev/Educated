@@ -8,5 +8,6 @@ export const baseurl = axios.create({
 
 	headers: {
 		Authorization: `Bearer ${token1}`,
+		Accept: `application/json`
 	},
 })
