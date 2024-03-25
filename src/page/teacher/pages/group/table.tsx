@@ -1,4 +1,13 @@
-import { Table, Modal, Form, Input, message } from "antd";
+import {
+  Table,
+  Modal,
+  Form,
+  Input,
+  message,
+  Space,
+  Select,
+  SelectProps,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { Button } from "../../../../components/ui/button";
 import { baseurl } from "@/utils/axios";
@@ -6,14 +15,17 @@ import { PenSquare, Trash } from "lucide-react";
 import Madal from "@/components/shared/madal";
 import { useFolder, usePersonStore } from "@/utils/zuztand";
 import TextArea from "antd/es/input/TextArea";
+import { PiSunglasses } from "react-icons/pi";
 
 const TableGroup = () => {
   const [table, setTable] = useState([]);
   const [update, setUpdate] = useState<any>({});
+  const [student, setStudent] = useState([]);
   const { updateFirstName, updateLastName } = usePersonStore();
 
   useEffect(() => {
     baseurl.get(`/groups`).then((res) => setTable(res.data));
+    baseurl.get(`/students`).then((res) => setStudent(res?.data));
   }, [update]);
 
   const { onOpen } = useFolder();
@@ -96,15 +108,34 @@ const TableGroup = () => {
     },
   ];
 
+  const options: any = [];
+
+  student.map((e: any, i) => {
+    options.push({
+      ...e,
+      label: e?.name,
+      value: e?._id,
+    });
+  });
+
+  const handleChange = (value: string[]) => {
+    baseurl.post(`/groups/{}/`, value).then((res) => console.log(res));
+  };
+
   return (
     <div>
       <Table
-        //   pagination
         expandable={{
           expandedRowRender: (record) => (
             <div className="w-full bg-slate-500">
-              <Input />
-              <Button>Add Student Group</Button>
+              <Select
+                mode="multiple"
+                style={{ width: "100%" }}
+                placeholder="select one country"
+                onChange={handleChange}
+                optionLabelProp="label"
+                options={options}
+              />
             </div>
           ),
         }}
