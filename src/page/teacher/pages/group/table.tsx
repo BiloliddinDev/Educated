@@ -7,33 +7,9 @@ import Madal from "@/components/shared/madal";
 import { useFolder } from "@/utils/zuztand";
 import TextArea from "antd/es/input/TextArea";
 
-interface Group {
-  _id: string;
-  name: string;
-  description: string;
-  teacher: string;
-  students: string[];
-}
-
-interface Student {
-  _id: string;
-  name: string;
-}
-
-interface TableGroupProps {
-  groups: Group[];
-  students: Student[];
-  onEdit: (group: Group) => void;
-  onDelete: (groupId: string) => void;
-  onAddStudent: (groupId: string, studentId: string) => void;
-  onRemoveStudent: (groupId: string, studentId: string) => void;
-}
-
 const TableGroup = () => {
   const [table, setTable] = useState([]);
   const [update, setUpdate] = useState({});
-
-  //   console.log(update);
 
   useEffect(() => {
     baseurl.get(`/groups`).then((res) => setTable(res.data));
