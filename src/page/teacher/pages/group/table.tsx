@@ -4,16 +4,17 @@ import { Button } from "../../../../components/ui/button";
 import { baseurl } from "@/utils/axios";
 import { PenSquare, Trash } from "lucide-react";
 import Madal from "@/components/shared/madal";
-import { useFolder } from "@/utils/zuztand";
+import { useFolder, usePersonStore } from "@/utils/zuztand";
 import TextArea from "antd/es/input/TextArea";
 
 const TableGroup = () => {
   const [table, setTable] = useState([]);
-  const [update, setUpdate] = useState({});
+  const [update, setUpdate] = useState<any>({});
+  const { updateFirstName, updateLastName } = usePersonStore();
 
   useEffect(() => {
     baseurl.get(`/groups`).then((res) => setTable(res.data));
-  }, []);
+  }, [update]);
 
   const { onOpen } = useFolder();
 
@@ -24,17 +25,17 @@ const TableGroup = () => {
       .delete(`/groups/${e._id}`)
       .then((res) => {
         console.log(res), message.success("Group delete");
-        //   window.location.reload();
-        // window.location.re;
+        setUpdate(1);
       })
       .catch((err) => console.log(err));
   };
 
-  //   const Update = (e: any) => {
-  //     setUpdate(e);
-  //     onOpen();
-  //     console.log(e, 1111);
-  //   };
+  const Update = (e: any) => {
+    updateFirstName(e.name);
+    updateLastName(e.description);
+
+    onOpen();
+  };
 
   table.map((e: any, i) => {
     data.push({
@@ -57,7 +58,7 @@ const TableGroup = () => {
             <Trash />
           </Button>
           <Button
-            // onClick={() => Update(e)}
+            onClick={() => Update(e)}
             className="bg-yellow-500 hover:bg-yellow-400"
           >
             <PenSquare />
@@ -97,58 +98,17 @@ const TableGroup = () => {
   ];
 
   return (
-    <>
+    <div>
       <Table
         //   pagination
         expandable={{
           expandedRowRender: (record) => <h1>Salom dunyo</h1>,
-          // rowExpandable: (record) => record.name !== "Not Expandable",
         }}
         rowKey={columns.id}
         columns={columns}
         dataSource={data}
       />
-      <Madal>
-        <div className="flex flex-col justify-center items-center">
-          <Form
-            // form={form}
-            name="group-form"
-            // onFinish={handleSubmit}
-            autoComplete="off"
-            className="flex flex-col justify-center w-full"
-          >
-            <h1 className="text-xl mb-2">Name</h1>
-            <Form.Item
-              name="name"
-              rules={[{ required: true, message: "Please input group name!" }]}
-            >
-              <Input
-                // defaultValue={update.name}
-                size="large"
-                className="rounded-md"
-              />
-            </Form.Item>
-            <h1 className="text-xl mb-2">Description</h1>
-            <Form.Item
-              name="description"
-              rules={[
-                { required: true, message: "Please input group description!" },
-              ]}
-            >
-              <TextArea rows={4} className="rounded-md" />
-            </Form.Item>
-            <Button
-              // size={"lg"}
-              //   type="primary"
-              //   htmlType="submit"
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4"
-            >
-              Submit
-            </Button>
-          </Form>
-        </div>
-      </Madal>
-    </>
+    </div>
   );
 };
 
