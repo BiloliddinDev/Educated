@@ -33,7 +33,6 @@ const TableGroup = () => {
   const Update = (e: any) => {
     updateFirstName(e.name);
     updateLastName(e.description);
-
     onOpen();
   };
 
@@ -102,7 +101,12 @@ const TableGroup = () => {
       <Table
         //   pagination
         expandable={{
-          expandedRowRender: (record) => <h1>Salom dunyo</h1>,
+          expandedRowRender: (record) => (
+            <div className="w-full bg-slate-500">
+              <Input />
+              <Button>Add Student Group</Button>
+            </div>
+          ),
         }}
         rowKey={columns.id}
         columns={columns}

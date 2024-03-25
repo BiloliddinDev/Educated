@@ -6,7 +6,7 @@ import { Form, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { baseurl } from "@/utils/axios";
 import Madal from "@/components/shared/madal";
-import { useFolder } from "@/utils/zuztand";
+import { useFolder, usePersonStore } from "@/utils/zuztand";
 
 export interface Group {
   _id: string;
@@ -22,17 +22,17 @@ export interface Student {
 }
 
 const Groups = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [groups, setGroups] = useState<Group[]>([]);
-  const [students, setStudents] = useState<Student[]>([]);
   const [form] = Form.useForm();
-  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+
+  const { firstName, lastName, updateFirstName, updateLastName } =
+    usePersonStore();
 
   const createGroup = async (values: any) => {
     try {
       const res = await baseurl.post("/groups", values);
       setGroups([...groups, res.data]);
+
       onClose;
       message.success("Group created successfully");
     } catch (error) {
@@ -41,27 +41,14 @@ const Groups = () => {
     }
   };
 
-  const updateGroup = async (values: any) => {
-    try {
-      const res = await baseurl.put(`/groups/${selectedGroup?._id}`, values);
-      const updatedGroups = groups.map((group) =>
-        group._id === res.data._id ? res.data : group
-      );
-      setGroups(updatedGroups);
-
-      message.success("Group updated successfully");
-    } catch (error) {
-      console.error("Error occurred while updating group:", error);
-      message.error("Failed to update group");
-    }
-  };
+  function Nimadur() {
+    onOpen();
+    updateFirstName("");
+    updateLastName("");
+  }
 
   const handleSubmit = (values: any) => {
-    if (selectedGroup) {
-      updateGroup(values);
-    } else {
-      createGroup(values);
-    }
+    createGroup(values);
   };
   const { onOpen, onClose } = useFolder();
   return (
@@ -71,7 +58,7 @@ const Groups = () => {
       </h1>
       <div className="p-4">
         <Button
-          onClick={onOpen}
+          onClick={Nimadur}
           style={{ backgroundColor: "green", color: "white" }}
           className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full p-3"
         >
@@ -93,7 +80,11 @@ const Groups = () => {
               name="name"
               rules={[{ required: true, message: "Please input group name!" }]}
             >
-              <Input size="large" className="rounded-md" />
+              <Input
+                defaultValue={firstName}
+                size="large"
+                className="rounded-md"
+              />
             </Form.Item>
             <h1 className="text-xl mb-2">Description</h1>
             <Form.Item
@@ -102,7 +93,11 @@ const Groups = () => {
                 { required: true, message: "Please input group description!" },
               ]}
             >
-              <TextArea rows={4} className="rounded-md" />
+              <TextArea
+                defaultValue={lastName}
+                rows={4}
+                className="rounded-md"
+              />
             </Form.Item>
             <Button
               // size={"lg"}
