@@ -29,16 +29,6 @@ const Groups = () => {
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
 
-  // const openModal = () => {
-  //   setSelectedGroup(null);
-  //   setIsModalOpen(true);
-  // };
-
-  // const closeModal = () => {
-  //   setIsModalOpen(false);
-  //   form.resetFields();
-  // };
-
   const createGroup = async (values: any) => {
     try {
       const res = await baseurl.post("/groups", values);
