@@ -30,7 +30,6 @@ const Groups = () => {
 	const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
 	const { onOpen, onClose } = useFolder()
 
-<<<<<<< HEAD
 	const createGroup = async (values: any) => {
 		try {
 			const res = await baseurl.post('/groups', values)
@@ -57,19 +56,6 @@ const Groups = () => {
 			message.error('Failed to update group')
 		}
 	}
-=======
-  const createGroup = async (values: any) => {
-    try {
-      const res = await baseurl.post("/groups", values);
-      setGroups([...groups, res.data]);
-      onClose;
-      message.success("Group created successfully");
-    } catch (error) {
-      console.error("Error occurred while creating group:", error);
-      message.error("Failed to create group");
-    }
-  };
->>>>>>> 406a05c326a6cf3a0185d9f9724c3a0efab2d46f
 
 	const handleSubmit = (values: any) => {
 		if (selectedGroup) {
