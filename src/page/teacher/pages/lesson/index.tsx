@@ -1,6 +1,16 @@
 import { baseurl } from '@/utils/axios'
-import { useEffect, useState } from 'react'
-import { Button, Modal, Table, Form, Input, DatePicker } from 'antd'
+import { InboxOutlined } from '@ant-design/icons'
+import {
+	Button,
+	DatePicker,
+	Form,
+	Input,
+	Modal,
+	Select,
+	Table,
+	Upload,
+} from 'antd'
+import React, { useEffect, useState } from 'react'
 
 interface Homework {
 	id: string
@@ -8,6 +18,7 @@ interface Homework {
 	description: string
 	dueDate: Date
 	group: string
+	student: string
 }
 
 interface Material {
@@ -15,17 +26,21 @@ interface Material {
 	title: string
 	description: string
 	group: string
+	student: string
 	fileType: string
 	file: string
 }
+
+const { Option } = Select
 
 const Lesson = () => {
 	const [homeworkModalVisible, setHomeworkModalVisible] = useState(false)
 	const [materialModalVisible, setMaterialModalVisible] = useState(false)
 	const [homeworks, setHomeworks] = useState<Homework[]>([])
 	const [materials, setMaterials] = useState<Material[]>([])
-	const [currentHomework, setCurrentHomework] = useState<Homework | null>(null)
-	const [currentMaterial, setCurrentMaterial] = useState<Material | null>(null)
+	const [groups, setGroups] = useState<any[]>([])
+	const [students, setStudents] = useState<any[]>([])
+	const [fileList, setFileList] = useState<any[]>([])
 
 	const [homeworkForm] = Form.useForm()
 	const [materialForm] = Form.useForm()
@@ -33,26 +48,25 @@ const Lesson = () => {
 	useEffect(() => {
 		getAllHomework()
 		getAllMaterials()
+		fetchGroups()
+		fetchStudents()
 	}, [])
 
 	const handleCreateHomework = () => {
-		setCurrentHomework(null)
 		setHomeworkModalVisible(true)
 	}
 
 	const handleCreateMaterial = () => {
-		setCurrentMaterial(null)
 		setMaterialModalVisible(true)
 	}
 
-	const handleSubmitHomework = async () => {
+	const onFinishHomework = async (values: any) => {
 		try {
-			const values = await homeworkForm.validateFields()
 			const homework = {
 				...values,
 				dueDate: values.dueDate.toDate(),
 			}
-			const result = await baseurl.post('/api/homework', homework)
+			const result = await baseurl.post('/homework', homework)
 			setHomeworks([...homeworks, result.data])
 			setHomeworkModalVisible(false)
 			homeworkForm.resetFields()
@@ -61,14 +75,25 @@ const Lesson = () => {
 		}
 	}
 
-	const handleSubmitMaterial = async () => {
+	const onFinishMaterial = async (values: any) => {
 		try {
-			const values = await materialForm.validateFields()
-			const material = { ...values }
-			const result = await baseurl.post('/api/material', material)
+			const formData = new FormData()
+			formData.append('title', values.title)
+			formData.append('description', values.description)
+			formData.append('group', values.group)
+			formData.append('student', values.student)
+			fileList.forEach(file => {
+				formData.append('file', file.originFileObj)
+			})
+			const result = await baseurl.post('/materials', formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
+			})
 			setMaterials([...materials, result.data])
 			setMaterialModalVisible(false)
 			materialForm.resetFields()
+			setFileList([])
 		} catch (error) {
 			console.error(error)
 		}
@@ -85,8 +110,26 @@ const Lesson = () => {
 
 	const getAllMaterials = async () => {
 		try {
-			const result = await baseurl.get('/material')
+			const result = await baseurl.get('/materials')
 			setMaterials(result.data)
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	const fetchGroups = async () => {
+		try {
+			const result = await baseurl.get('/groups')
+			setGroups(result.data)
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	const fetchStudents = async () => {
+		try {
+			const result = await baseurl.get('/students')
+			setStudents(result.data)
 		} catch (error) {
 			console.error(error)
 		}
@@ -110,31 +153,14 @@ const Lesson = () => {
 		}
 	}
 
-	// Modal for creating homework
 	const homeworkModal = (
 		<Modal
 			title='Create Homework'
-			visible={homeworkModalVisible}
+			open={homeworkModalVisible}
 			onCancel={() => setHomeworkModalVisible(false)}
-			footer={[
-				<Button
-					key='cancel'
-					onClick={() => setHomeworkModalVisible(false)}
-					className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded'
-				>
-					Cancel
-				</Button>,
-				<Button
-					key='submit'
-					type='primary'
-					onClick={handleSubmitHomework}
-					className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-				>
-					Create
-				</Button>,
-			]}
+			footer={null}
 		>
-			<Form form={homeworkForm} layout='vertical' className='max-w-md'>
+			<Form form={homeworkForm} layout='vertical' className='max-w-md' onFinish={onFinishHomework}>
 				<Form.Item
 					name='title'
 					label='Title'
@@ -159,9 +185,37 @@ const Lesson = () => {
 				<Form.Item
 					name='group'
 					label='Group'
-					rules={[{ required: true, message: 'Please enter a group' }]}
+					rules={[{ required: true, message: 'Please select a group' }]}
 				>
-					<Input placeholder='Enter group name' />
+					<Select>
+						{groups?.map(group => (
+							<Option key={group.id} value={group.id}>
+								{group.name}
+							</Option>
+						))}
+					</Select>
+				</Form.Item>
+				<Form.Item
+					name='student'
+					label='Student'
+					rules={[{ required: true, message: 'Please select a student' }]}
+				>
+					<Select>
+						{students?.map(student => (
+							<Option key={student.id} value={student.id}>
+								{student.name}
+							</Option>
+						))}
+					</Select>
+				</Form.Item>
+				<Form.Item>
+					<Button
+						type='primary'
+						htmlType='submit'
+						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+					>
+						Create
+					</Button>
 				</Form.Item>
 			</Form>
 		</Modal>
@@ -170,27 +224,11 @@ const Lesson = () => {
 	const materialModal = (
 		<Modal
 			title='Create Material'
-			visible={materialModalVisible}
+			open={materialModalVisible}
 			onCancel={() => setMaterialModalVisible(false)}
-			footer={[
-				<Button
-					key='cancel'
-					onClick={() => setMaterialModalVisible(false)}
-					className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded'
-				>
-					Cancel
-				</Button>,
-				<Button
-					key='submit'
-					type='primary'
-					onClick={handleSubmitMaterial}
-					className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-				>
-					Create
-				</Button>,
-			]}
+			footer={null}
 		>
-			<Form form={materialForm} layout='vertical' className='max-w-md'>
+			<Form form={materialForm} layout='vertical' className='max-w-md' onFinish={onFinishMaterial}>
 				<Form.Item
 					name='title'
 					label='Title'
@@ -208,28 +246,79 @@ const Lesson = () => {
 				<Form.Item
 					name='group'
 					label='Group'
-					rules={[{ required: true, message: 'Please enter a group' }]}
+					rules={[{ required: true, message: 'Please select a group' }]}
 				>
-					<Input placeholder='Enter group name' />
+					<Select>
+						{groups?.map(group => (
+							<Option key={group.id} value={group.id}>
+								{group.name}
+							</Option>
+						))}
+					</Select>
+				</Form.Item>
+				<Form.Item
+					name='student'
+					label='Student'
+					rules={[{ required: true, message: 'Please select a student' }]}
+				>
+					<Select>
+						{students?.map(student => (
+							<Option key={student.id} value={student.id}>
+								{student.name}
+							</Option>
+						))}
+					</Select>
+				</Form.Item>
+				<Form.Item
+					name='file'
+					label='File'
+					rules={[{ required: true, message: 'Please upload a file' }]}
+				>
+					<Upload.Dragger
+						fileList={fileList}
+						onChange={info => {
+							const newFileList = info.fileList.slice(-1)
+							setFileList(newFileList)
+						}}
+					>
+						<p className='ant-upload-drag-icon'>
+							<InboxOutlined />
+						</p>
+						<p className='ant-upload-text'>
+							Click or drag file to this area to upload
+						</p>
+						<p className='ant-upload-hint'>
+							Support for a single or bulk upload. Strictly prohibited from
+							uploading company data or other banned files.
+						</p>
+					</Upload.Dragger>
+				</Form.Item>
+				<Form.Item>
+					<Button
+						type='primary'
+						htmlType='submit'
+						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+					>
+						Create
+					</Button>
 				</Form.Item>
 			</Form>
 		</Modal>
 	)
 
-	// Table columns for displaying homeworks
 	const homeworkColumns = [
 		{
 			title: 'Title',
 			dataIndex: 'title',
 			key: 'title',
-			sorter: (a: Homework, b: Homework) => a.title.length - b.title.length,
+			sorter: (a: Homework, b: Homework) => a.title.localeCompare(b.title),
 		},
 		{
 			title: 'Description',
 			dataIndex: 'description',
 			key: 'description',
 			sorter: (a: Homework, b: Homework) =>
-				a.description.length - b.description.length,
+				a.description.localeCompare(b.description),
 		},
 		{
 			title: 'Due Date',
@@ -237,76 +326,111 @@ const Lesson = () => {
 			key: 'dueDate',
 			sorter: (a: Homework, b: Homework) =>
 				new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
+			render: (date: Date) => date instanceof Date ? date.toLocaleDateString() : '',
 		},
 		{
 			title: 'Group',
 			dataIndex: 'group',
 			key: 'group',
-			sorter: (a: Homework, b: Homework) => a.group.length - b.group.length,
+			sorter: (a: Homework, b: Homework) => a.group.localeCompare(b.group),
+		},
+		{
+			title: 'Student',
+			dataIndex: 'student',
+			key: 'student',
+			sorter: (a: Homework, b: Homework) => a.student.localeCompare(b.student),
+		},
+		{
+			title: 'Actions',
+			key: 'actions',
+			render: (text: string, record: Homework) => (
+				<Button onClick={() => handleDeleteHomework(record.id)} danger>
+					Delete
+				</Button>
+			),
 		},
 	]
 
-	// Table columns for displaying materials
 	const materialColumns = [
 		{
 			title: 'Title',
 			dataIndex: 'title',
 			key: 'title',
-			sorter: (a: Material, b: Material) => a.title.length - b.title.length,
+			sorter: (a: Material, b: Material) => a.title.localeCompare(b.title),
 		},
 		{
 			title: 'Description',
 			dataIndex: 'description',
 			key: 'description',
 			sorter: (a: Material, b: Material) =>
-				a.description.length - b.description.length,
+				a.description.localeCompare(b.description),
 		},
 		{
 			title: 'Group',
 			dataIndex: 'group',
 			key: 'group',
-			sorter: (a: Material, b: Material) => a.group.length - b.group.length,
+			sorter: (a: Material, b: Material) => a.group.localeCompare(b.group),
+		},
+		{
+			title: 'Student',
+			dataIndex: 'student',
+			key: 'student',
+			sorter: (a: Material, b: Material) => a.student.localeCompare(b.student),
 		},
 		{
 			title: 'File Type',
 			dataIndex: 'fileType',
 			key: 'fileType',
 			sorter: (a: Material, b: Material) =>
-				a.fileType.length - b.fileType.length,
+				a.fileType.localeCompare(b.fileType),
 		},
 		{
 			title: 'File',
 			dataIndex: 'file',
 			key: 'file',
-			sorter: (a: Material, b: Material) => a.file.length - b.file.length,
+			render: (text: string, record: Material) => (
+				<a href={record.file} target='_blank' rel='noopener noreferrer'>
+					View File
+				</a>
+			),
+		},
+		{
+			title: 'Actions',
+			key: 'actions',
+			render: (text: string, record: Material) => (
+				<Button onClick={() => handleDeleteMaterial(record.id)} danger>
+					Delete
+				</Button>
+			),
 		},
 	]
 
 	return (
-		<div>
-			<h1 className='bg-green-500 p-2'>Lesson</h1>
-			<div className='flex m-2 gap-3'>
-				<Button onClick={handleCreateHomework}>Create Homework</Button>
-				<Button onClick={handleCreateMaterial}>Create Material</Button>
+		<div className='container mx-auto p-4'>
+			<h1 className='text-2xl font-bold mb-4 bg-green-500 text-white p-2'>
+				Lesson
+			</h1>
+			<div className='flex mb-4'>
+				<Button
+					onClick={handleCreateHomework}
+					className='mr-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+				>
+					Create Homework
+				</Button>
+				<Button
+					onClick={handleCreateMaterial}
+					className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+				>
+					Create Material
+				</Button>
 			</div>
 
-			{/* Homework table */}
-			<h2 className='text-xl mt-4'>Homeworks</h2>
-			<Table
-				dataSource={homeworks}
-				columns={homeworkColumns}
-				pagination={false}
-			/>
+			<h2 className='text-xl font-bold mb-2'>Homeworks</h2>
+			<Table dataSource={homeworks} columns={homeworkColumns} rowKey='id' />
 
-			{/* Material table */}
-			<h2 className='text-xl mt-4'>Materials</h2>
-			<Table
-				dataSource={materials}
-				columns={materialColumns}
-				pagination={false}
-			/>
+			<h2 className='text-xl font-bold mb-2 mt-4'>Materials</h2>
+			<Table dataSource={materials} columns={materialColumns} rowKey='id' />
 
-			{/* Modals */}
 			{homeworkModal}
 			{materialModal}
 		</div>

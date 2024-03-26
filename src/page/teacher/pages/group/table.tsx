@@ -65,6 +65,7 @@ const TableGroup = () => {
 					</Button>
 				</div>
 			),
+			students: e.students.map((student: any) => student.name).join(', '), // Join student names as a string
 		})
 	})
 
@@ -91,6 +92,11 @@ const TableGroup = () => {
 			key: 'teacher',
 		},
 		{
+			title: 'Students',
+			dataIndex: 'students', // Use the new students field
+			key: 'students',
+		},
+		{
 			title: 'Actions',
 			dataIndex: 'action',
 			key: 'actions',
@@ -114,8 +120,35 @@ const TableGroup = () => {
 			.catch(err => console.log(err))
 	}
 
+	// Studentlar uchun alohida jadval uchun ma'lumotlar
+	const studentColumns = [
+		{
+			title: 'Name',
+			dataIndex: 'name',
+			key: 'name',
+		},
+		{
+			title: 'Created At',
+			dataIndex: 'createdAt',
+			key: 'createdAt',
+		},
+		{
+			title: 'Description',
+			dataIndex: 'description',
+			key: 'description',
+		},
+	]
+
 	return (
 		<div>
+			<h2>Student Information</h2>
+			<Table
+				columns={studentColumns}
+				dataSource={student}
+				rowKey={record => record._id}
+			/>
+
+			<h2>Group Information</h2>
 			<Table
 				expandable={{
 					expandedRowRender: record => (
