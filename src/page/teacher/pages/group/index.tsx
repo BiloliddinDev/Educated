@@ -1,8 +1,6 @@
 import { Button, message, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import TableGroup from "./table";
-// import Modal from '../../../../components/shared/madal'
-
 import { Form, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { baseurl } from "@/utils/axios";
