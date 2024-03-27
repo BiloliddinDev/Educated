@@ -53,6 +53,8 @@ const Lesson = () => {
     getAllMaterials();
     fetchGroups();
   }, []);
+	console.log(materials);
+	
 
   const handleCreateHomework = () => {
     setHomeworkModalVisible(true);
@@ -68,11 +70,21 @@ const Lesson = () => {
       .then((res) => message.success("Homework create !"));
   };
 
-  const onFinishMaterial = async (values: any) => {
-    baseurl.post(`/materials`, { values }).then((res) => console.log(res.data));
-  };
+	const onFinishMaterial = async (values: any) => {
+		try {
+			const response = await baseurl.post(`/materials`, values);
+			console.log(response.data);
+			message.success("Material created successfully"); 
+			setMaterialModalVisible(false); // Modalni yopamiz
+			materialForm.resetFields(); // Formani tozalaymiz
+		} catch (error) {
+			console.error(error);
+			message.error("Failed to create material"); // Xatolik haqida foydalanuvchini xabardor qilamiz
+		}
+	};
+	
 
-  const getAllHomework = async () => {
+	const getAllHomework = async () => {
     try {
       const result = await baseurl.get("/homework");
       setHomeworks(result.data);
@@ -328,7 +340,7 @@ const Lesson = () => {
       title: "Group",
       dataIndex: "group",
       key: "group",
-      sorter: (a: Material, b: Material) => a.group.localeCompare(b.group),
+			sorter: (a: Material, b: Material) => a.group.localeCompare(b.group),
     },
     {
       title: "Student",
