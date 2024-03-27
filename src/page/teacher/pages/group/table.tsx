@@ -103,6 +103,8 @@ const TableGroup = () => {
     },
   ];
 
+  // console.log(table);
+
   const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
 
   const handleStudentSelect = (value: string[]) => {
@@ -141,35 +143,41 @@ const TableGroup = () => {
 
   return (
     <div>
-      <h2>Student Information</h2>
-      <Table
+      {/* <h2>Student Information</h2> */}
+      {/* <Table
         columns={studentColumns}
         dataSource={student}
-        rowKey={(record) => record._id}
-      />
+        // rowKey={(record) => record[]._id}
+      /> */}
 
       <h2>Group Information</h2>
       <Table
         expandable={{
           expandedRowRender: (record) => (
-            <div className="w-full bg-slate-500">
-              <Select
-                mode="multiple"
-                style={{ width: "100%" }}
-                placeholder="Select students"
-                onChange={handleStudentSelect}
-                optionLabelProp="label"
-                options={student.map((s: any) => ({
-                  value: s._id,
-                  label: s.name,
-                }))}
-              />
-              <Button
-                onClick={() => handleAddStudentsToGroup(record._id)}
-                className="mt-4 bg-green-500 hover:bg-green-600"
-              >
-                Add Students
-              </Button>
+            <div className="w-full">
+              <div className="flex items-center justify-center gap-3">
+                <Select
+                  className="flex-3"
+                  mode="multiple"
+                  style={{ width: "100%" }}
+                  placeholder="Select students"
+                  onChange={handleStudentSelect}
+                  optionLabelProp="label"
+                  size="large"
+                  options={student.map((s: any) => ({
+                    value: s._id,
+                    label: s.name,
+                  }))}
+                />
+                <Button
+                  onClick={() => handleAddStudentsToGroup(record._id)}
+                  className=" bg-green-500 hover:bg-green-600 flex-2"
+                >
+                  Add Students
+                </Button>
+              </div>
+
+              <Table columns={studentColumns} dataSource={table[0]?.students} />
             </div>
           ),
         }}
