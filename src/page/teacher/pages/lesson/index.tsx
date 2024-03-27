@@ -1,5 +1,5 @@
 import { baseurl } from '@/utils/axios'
-import { InboxOutlined } from '@ant-design/icons'
+import { InboxOutlined, DeleteOutlined  } from '@ant-design/icons'
 import {
 	Button,
 	DatePicker,
@@ -7,6 +7,7 @@ import {
 	Input,
 	Modal,
 	Select,
+	Space,
 	Table,
 	Upload,
 } from 'antd'
@@ -352,58 +353,65 @@ const Lesson = () => {
 	]
 
 	const materialColumns = [
-		{
-			title: 'Title',
-			dataIndex: 'title',
-			key: 'title',
-			sorter: (a: Material, b: Material) => a.title.localeCompare(b.title),
-		},
-		{
-			title: 'Description',
-			dataIndex: 'description',
-			key: 'description',
-			sorter: (a: Material, b: Material) =>
-				a.description.localeCompare(b.description),
-		},
-		{
-			title: 'Group',
-			dataIndex: 'group',
-			key: 'group',
-			sorter: (a: Material, b: Material) => a.group.localeCompare(b.group),
-		},
-		{
-			title: 'Student',
-			dataIndex: 'student',
-			key: 'student',
-			sorter: (a: Material, b: Material) => a.student.localeCompare(b.student),
-		},
-		{
-			title: 'File Type',
-			dataIndex: 'fileType',
-			key: 'fileType',
-			sorter: (a: Material, b: Material) =>
-				a.fileType.localeCompare(b.fileType),
-		},
-		{
-			title: 'File',
-			dataIndex: 'file',
-			key: 'file',
-			render: (text: string, record: Material) => (
-				<a href={record.file} target='_blank' rel='noopener noreferrer'>
-					View File
-				</a>
-			),
-		},
-		{
-			title: 'Actions',
-			key: 'actions',
-			render: (text: string, record: Material) => (
-				<Button onClick={() => handleDeleteMaterial(record.id)} danger>
-					Delete
-				</Button>
-			),
-		},
-	]
+    {
+      title: 'Title',
+      dataIndex: 'title',
+      key: 'title',
+      sorter: (a: Material, b: Material) => a.title.localeCompare(b.title),
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      sorter: (a: Material, b: Material) =>
+        a.description.localeCompare(b.description),
+    },
+    {
+      title: 'Group',
+      dataIndex: 'group',
+      key: 'group',
+      sorter: (a: Material, b: Material) => a.group.localeCompare(b.group),
+    },
+    {
+      title: 'Student',
+      dataIndex: 'student',
+      key: 'student',
+      sorter: (a: Material, b: Material) => a.student.localeCompare(b.student),
+    },
+    {
+      title: 'File Type',
+      dataIndex: 'fileType',
+      key: 'fileType',
+      sorter: (a: Material, b: Material) =>
+        a.fileType.localeCompare(b.fileType),
+    },
+    {
+      title: 'File',
+      dataIndex: 'file',
+      key: 'file',
+      render: (text: string, record: Material) => (
+        <a href={record.file} target="_blank" rel="noopener noreferrer">
+          View File
+        </a>
+      ),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (text: string, record: Material) => (
+        <Space size="middle">
+          <Button
+            onClick={() => handleDeleteMaterial(record.id)}
+            danger
+            type="primary"
+            icon={<DeleteOutlined />}
+          >
+            Delete
+          </Button>
+        </Space>
+      ),
+    },
+  ]
 
 	return (
 		<div className='container mx-auto p-4'>
