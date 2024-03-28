@@ -1,79 +1,121 @@
-import { baseurl } from '@/utils/axios'
-import { useFolder, usePersonStore } from '@/utils/zuztand'
-import { Select, Table, message, Popconfirm } from 'antd'
-import { PenSquare, Trash } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { Button } from '../../../../components/ui/button'
+import { baseurl } from '@/utils/axios';
+import { useFolder, usePersonStore } from '@/utils/zuztand';
+import { Select, Table, message, Popconfirm, Badge } from 'antd';
+import { PenSquare, Trash } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Button } from '../../../../components/ui/button';
 
 const TableGroup = () => {
-    const [table, setTable] = useState([])
-    const [student, setStudent] = useState([])
-    const [selectedStudents, setSelectedStudents] = useState<string[]>([])
-    const [update, setUpdate] = useState(0)
-    const { updateFirstName, updateLastName } = usePersonStore()
+    const [table, setTable] = useState([]);
+    const [student, setStudent] = useState([]);
+    const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
+    const [update, setUpdate] = useState(0);
+    const { updateFirstName, updateLastName } = usePersonStore();
 
     useEffect(() => {
         // Fetch groups
         baseurl
             .get('/groups')
             .then(res => setTable(res.data))
-            .catch(err => console.error(err))
+            .catch(err => console.error(err));
 
         // Fetch students
         baseurl
             .get('/students')
             .then(res => setStudent(res.data))
-            .catch(err => console.error(err))
-    }, [update])
+            .catch(err => console.error(err));
+    }, [update]);
 
-    const { onOpen } = useFolder()
-    const data: any = []
+    const { onOpen } = useFolder();
+    const data: any = [];
 
     const handleDeleteGroup = (groupId: string) => {
         baseurl
             .delete(`/groups/${groupId}`)
             .then(res => {
-                console.log(res)
-                message.success('Group deleted')
-                setUpdate(update + 1)
+                console.log(res);
+                message.success('Group deleted');
+                setUpdate(update + 1);
             })
-            .catch(err => console.error(err))
-    }
+            .catch(err => console.error(err));
+    };
 
     const handleUpdateGroup = (group: any) => {
-        updateFirstName(group.name)
-        updateLastName(group.description)
-        onOpen()
-    }
+        updateFirstName(group.name);
+        updateLastName(group.description);
+        onOpen();
+    };
 
     const handleDeleteStudent = async (groupId: string, studentId: string) => {
         try {
-            const response = await baseurl.delete(`/groups/${groupId}/students/${studentId}`)
-            message.success(response.data.message)
-            setUpdate(update + 1) // Trigger re-render to see the updated data
+            const response = await baseurl.delete(`/groups/${groupId}/students/${studentId}`);
+            message.success(response.data.message);
+            setUpdate(update + 1); // Trigger re-render to see the updated data
         } catch (err) {
-            message.error('Failed to remove student from group')
-            console.error(err)
+            message.error('Failed to remove student from group');
+            console.error(err);
         }
-    }
+    };
 
     const handleStudentSelect = (value: string[]) => {
-        setSelectedStudents(value)
-    }
+        setSelectedStudents(value);
+    };
 
     const handleAddStudentsToGroup = async (groupId: string) => {
         try {
             const response = await baseurl.post(`/groups/${groupId}/students/`, {
                 studentIds: selectedStudents,
-            })
-            message.success(response.data.message)
-            setSelectedStudents([]) // Clear selected students after adding
-            setUpdate(update + 1) // Trigger re-render to see the updated data
+            });
+            message.success(response.data.message);
+            setSelectedStudents([]); // Clear selected students after adding
+            setUpdate(update + 1); // Trigger re-render to see the updated data
         } catch (err) {
-            message.error('Failed to add students to group')
-            console.error(err)
+            message.error('Failed to add students to group');
+            console.error(err);
         }
-    }
+    };
+
+    const handleMarkAttendance = async (groupId: string, student: any) => {
+        try {
+            const payload = {
+                groupId,
+                students: [
+                    {
+                        id: student._id,
+                        isPresent: !student.isPresent, // Toggle the attendance status
+                    },
+                ],
+            };
+
+            if (student.isPresent) {
+                await baseurl.post('/attendance', payload);
+            } else {
+                await baseurl.put('/attendance', payload);
+            }
+
+            // Update the student's attendance status in the local state
+            const updatedStudents = table.map((group: any) => {
+                if (group._id === groupId) {
+                    return {
+                        ...group,
+                        students: group.students.map((s: any) => {
+                            if (s._id === student._id) {
+                                return { ...s, isPresent: !s.isPresent };
+                            }
+                            return s;
+                        }),
+                    };
+                }
+                return group;
+            });
+            // setTable();
+
+            message.success('Attendance updated successfully');
+        } catch (error) {
+            console.error('Error marking attendance:', error);
+            message.error('Failed to mark attendance');
+        }
+    };
 
     table.forEach((group: any, i) => {
         data.push({
@@ -120,9 +162,15 @@ const TableGroup = () => {
                         <Button className='bg-red-600 hover:bg-red-500'>Remove</Button>
                     </Popconfirm>
                 ),
+                attendance: (
+                    <Badge
+                        status={student.isPresent ? 'success' : 'error'}
+                        text={student.isPresent ? 'Keldi' : 'Kelmadi'}
+                    />
+                ),
             })),
-        })
-    })
+        });
+    });
 
     const columns: any = [
         {
@@ -151,7 +199,7 @@ const TableGroup = () => {
             dataIndex: 'action',
             key: 'actions',
         },
-    ]
+    ];
 
     const studentColumns = [
         {
@@ -160,16 +208,16 @@ const TableGroup = () => {
             key: 'name',
         },
         {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description',
+            title: 'Attendance',
+            dataIndex: 'attendance',
+            key: 'attendance',
         },
         {
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
         },
-    ]
+    ];
 
     return (
         <div>
@@ -200,7 +248,17 @@ const TableGroup = () => {
                                 </Button>
                             </div>
 
-                            <Table columns={studentColumns} dataSource={record.students} />
+                            <Table
+                                columns={studentColumns}
+                                dataSource={record.students}
+                                rowKey='_id'
+                                pagination={false}
+                                onRow={(record, rowIndex) => {
+                                    return {
+                                        onClick: () => handleMarkAttendance(record._id, record),
+                                    };
+                                }}
+                            />
                         </div>
                     ),
                 }}
@@ -209,7 +267,7 @@ const TableGroup = () => {
                 dataSource={data}
             />
         </div>
-    )
-}
+    );
+};
 
-export default TableGroup
+export default TableGroup;

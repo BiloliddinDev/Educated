@@ -75,11 +75,11 @@ const Lesson = () => {
 			const response = await baseurl.post(`/materials`, values);
 			console.log(response.data);
 			message.success("Material created successfully"); 
-			setMaterialModalVisible(false); // Modalni yopamiz
-			materialForm.resetFields(); // Formani tozalaymiz
+			setMaterialModalVisible(false);
+			materialForm.resetFields(); 
 		} catch (error) {
 			console.error(error);
-			message.error("Failed to create material"); // Xatolik haqida foydalanuvchini xabardor qilamiz
+			message.error("Failed to create material");
 		}
 	};
 	
