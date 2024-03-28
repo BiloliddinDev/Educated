@@ -1,23 +1,23 @@
-import { useFolder } from "@/utils/zuztand";
-import { Modal } from "antd";
-import React, { useState } from "react";
+import { useFolder } from '@/utils/zuztand'
+import { Modal } from 'antd'
+import React from 'react'
 
 interface madalType {
-  children: React.ReactNode;
+	children: React.ReactNode
 }
 
 const Madal = ({ children }: madalType) => {
-  const { isOpen, onClose } = useFolder();
-  return (
-    <Modal
-      width={800}
-      title="User Information"
-      open={isOpen}
-      onCancel={onClose}
-    >
-      {children}
-    </Modal>
-  );
-};
+	const { isOpen, onClose } = useFolder()
+	return (
+		<Modal
+			title='Creation mode'
+			open={isOpen}
+			onCancel={onClose}
+			className='m-[auto] w-96'
+		>
+			{children}
+		</Modal>
+	)
+}
 
-export default Madal;
+export default Madal
