@@ -32,7 +32,7 @@ const TimeBoard: React.FC = () => {
 
 	const fetchTimeBoards = async () => {
 		try {
-			const response = await baseurl.get('/timeboard/teacher')
+			const response = await baseurl.get('/timeboards')
 			setTimeBoards(response.data)
 		} catch (error) {
 			console.error(error)
@@ -60,10 +60,13 @@ const TimeBoard: React.FC = () => {
 	const handleCreate = async (values: any) => {
 		try {
 			const { lessonName, lessonDateTime, groupId } = values
+			const selectedGroup = groups.find(group => group._id === groupId)
+			const teacherId = selectedGroup?.teacher?._id
 			const response = await baseurl.post('/timeboard', {
 				lessonName,
 				lessonDateTime: moment(lessonDateTime).toISOString(),
-				groupId,
+				group: groupId,
+				teacher: teacherId,
 			})
 			setTimeBoards([...timeBoards, response.data])
 			setVisible(false)
@@ -83,6 +86,9 @@ const TimeBoard: React.FC = () => {
 			title: 'Group',
 			dataIndex: ['group', 'name'],
 			key: 'groupName',
+			render: (text: string, record: TimeBoard) => (
+				<span>{record.group.name}</span>
+			),
 		},
 		{
 			title: 'Class time',
@@ -92,7 +98,8 @@ const TimeBoard: React.FC = () => {
 				<span>{moment(text).format('YYYY-MM-DD HH:mm')}</span>
 			),
 		},
-	]
+	];
+	
 
 	return (
 		<div className='mx-auto p-4'>
