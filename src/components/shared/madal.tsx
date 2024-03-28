@@ -9,12 +9,7 @@ interface madalType {
 const Madal = ({ children }: madalType) => {
 	const { isOpen, onClose } = useFolder()
 	return (
-		<Modal
-			title='Creation mode'
-			open={isOpen}
-			onCancel={onClose}
-			className='m-[auto] w-96'
-		>
+		<Modal open={isOpen} onCancel={onClose} className='m-[auto] w-96'>
 			{children}
 		</Modal>
 	)

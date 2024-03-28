@@ -1,14 +1,15 @@
-import { Outlet, useNavigate } from 'react-router-dom'
-import { RxDashboard } from 'react-icons/rx'
-import { PiStudent } from 'react-icons/pi'
-import { FaChalkboardTeacher, FaChartPie } from 'react-icons/fa'
-import { IoMdSettings } from 'react-icons/io'
+import { Separator } from '@/components/ui/separator'
 import type { MenuProps } from 'antd'
 import { Avatar, Menu } from 'antd'
-import { Separator } from '@/components/ui/separator'
+import { CgProfile } from 'react-icons/cg'
+import { FaChalkboardTeacher } from 'react-icons/fa'
+import { FiLogOut } from 'react-icons/fi'
+import { IoTimeOutline } from 'react-icons/io5'
+import { TiGroupOutline } from 'react-icons/ti'
+import { Outlet, useNavigate } from 'react-router-dom'
+import logo from '../../../public/e-center.svg'
 
 type MenuItem = Required<MenuProps>['items'][number]
-import logo from '../../../public/e-center.svg'
 function getItem(
 	label: React.ReactNode,
 	key: React.Key,
@@ -26,15 +27,25 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-	getItem('Dashboard', '/teacher', <RxDashboard size={20} />),
+	getItem('Timeboard', 'timeboard', <IoTimeOutline size={20} />),
 	getItem('Teachers', 'lesson', <FaChalkboardTeacher size={20} />),
-	getItem('Students/ classes', 'groups', <PiStudent size={20} />),
-	getItem('Settings and profile', 'profile', <IoMdSettings size={20} />),
-	getItem('Exams', '/1234', <FaChartPie size={20} />),
+	getItem('Students & groups', 'groups', <TiGroupOutline size={20} />),
+	getItem('Profile', 'profile', <CgProfile size={20} />),
+	getItem('Logout', 'logout', <FiLogOut size={20} />),
 ]
 
 const Teacher = () => {
 	const navigation = useNavigate()
+
+	const handleMenuClick = ({ key }: { key: React.Key }) => {
+		if (key === 'logout') {
+			localStorage.removeItem('token')
+			localStorage.removeItem('role')
+			navigation('/')
+		} else {
+			navigation(key as string)
+		}
+	}
 
 	return (
 		<div className='w-full'>
@@ -42,9 +53,7 @@ const Teacher = () => {
 				<Avatar className='w-[65px] h-[65px] mb-4' src={logo} />
 				<Separator className='bg-[#BDBDBD]' />
 				<Menu
-					onClick={({ key }) => {
-						navigation(key)
-					}}
+					onClick={handleMenuClick}
 					className='bg-transparent text-[14px] text-white mt-[25px]'
 					defaultSelectedKeys={[window.location.pathname]}
 					defaultOpenKeys={[window.location.pathname]}
